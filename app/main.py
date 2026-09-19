@@ -97,13 +97,14 @@ def main():
 
         for each_tool in assistant_message.tool_calls:
             arguments = json.loads(each_tool.function.arguments)
-            file_path = arguments["file_path"]
 
             if each_tool.function.name == "read_file":
+                file_path = arguments["file_path"]
                 with open(file_path, "r", encoding="utf-8") as file:
                     result = file.read()
 
             elif each_tool.function.name == "Write":
+                file_path = arguments["file_path"]                
                 content = arguments["content"]
 
                 with open(file_path, "w", encoding="utf-8") as file:
@@ -119,7 +120,7 @@ def main():
                     result = completed.stdout or "Command completed successfully"
                 else:
                     result = completed.stderr or (f"Command failed with exit code {completed.returncode}")
-                    
+
             messages.append({
                 "role": "tool",
                 "tool_call_id": each_tool.id,
