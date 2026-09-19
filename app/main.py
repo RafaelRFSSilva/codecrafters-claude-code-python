@@ -40,7 +40,27 @@ def main():
                         },
                         "required": ["file_path"]
                     }
-                }}
+                }},
+                {
+                "type": "function",
+                "function": {
+                    "name": "Write",
+                    "description": "Write content to a file",
+                    "parameters": {
+                    "type": "object",
+                    "required": ["file_path", "content"],
+                    "properties": {
+                        "file_path": {
+                        "type": "string",
+                        "description": "The path of the file to write to"
+                        },
+                        "content": {
+                        "type": "string",
+                        "description": "The content to write to the file"
+                        }
+                    }
+                    }
+                }},
             ]
         )
 
@@ -62,8 +82,17 @@ def main():
             arguments = json.loads(each_tool.function.arguments)
             file_path = arguments["file_path"]
 
-            with open(file_path, "r", encoding="utf-8") as file:
-                result = file.read()
+            if each_tool.function.name == "read_file":
+                with open(file_path, "r", encoding="utf-8") as file:
+                    result = file.read()
+
+            elif each_tool.function.name == "Write":
+                content = arguments["content"]
+
+                with open(file_path, "w", encoding="utf-8") as file:
+                    file.write(content)
+
+                    result = "File written successfully"
 
             messages.append({
                 "role": "tool",
